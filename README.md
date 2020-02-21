@@ -1,4 +1,5 @@
 # learningGo
 
-OK！\n
+OK！
+
 Here We Go
