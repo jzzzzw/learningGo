@@ -2,6 +2,7 @@ package calc
 
 import(
 	"testing"
+
 )
 
 
@@ -21,4 +22,23 @@ func TestSub(t *testing.T){
 	}
 
 	t.Logf("est sub(10,10)  succeed ")
+}
+
+func TestStore(t *testing.T){
+	m := &Monster{"tom",20,"cooking"}
+	res :=m.Store()
+	if res == false{
+		t.Fatalf("test store failed ,expected true ,get %v",res)
+	}
+	t.Logf("est store  succeed ")
+}
+
+func TestRestore(t *testing.T){
+	var m Monster
+	filepath :="/Users/qiankun04/go/src/learningGo/test/store_test.txt"
+	res:=m.restore(filepath)
+	if res == false{
+		t.Fatalf("test restore() failed ,expected true ,get %v",res)
+	}
+	t.Logf("test restore()  succeed , m is %v ",m)
 }
