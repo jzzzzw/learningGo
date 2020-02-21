@@ -1,0 +1,3 @@
+this is a test text
+for go language
+1231 456789 6789!!@#$%^
