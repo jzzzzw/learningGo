@@ -13,3 +13,12 @@ func TestAddUpper(t *testing.T){
 
 	t.Logf("test AddUpper(10) succeed ")
 }
+
+func TestSub(t *testing.T){
+	res :=sub(10,10)
+	if res !=0{
+		t.Fatalf("test sub(10,10) failed ,expected 0 ,get %v",res)
+	}
+
+	t.Logf("est sub(10,10)  succeed ")
+}
