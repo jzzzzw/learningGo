@@ -40,5 +40,10 @@ func TestRestore(t *testing.T){
 	if res == false{
 		t.Fatalf("test restore() failed ,expected true ,get %v",res)
 	}
-	t.Logf("test restore()  succeed , m is %v ",m)
+	if m.Name=="tom"{
+		t.Logf("test restore()  succeed , m is %v ,name is %v",m,m.Name)
+	}else{
+		t.Fatalf("test restore() failed ")
+	}
+	
 }
