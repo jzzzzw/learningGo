@@ -32,6 +32,7 @@ func(m *Monster)Store()bool{
 	content,err :=json.Marshal(m)
 	if err != nil{
 		fmt.Printf("Monster serializes error: %v\n",err)
+		return false
 	}
 	filePath := "/Users/qiankun04/go/src/learningGo/test/store_test.txt"
 	file,error := os.OpenFile(filePath,os.O_RDWR | os.O_CREATE | os.O_TRUNC,0777)
@@ -52,7 +53,7 @@ func(m *Monster)Store()bool{
 	return true 
 }
 
-func(m *Monster)restore(filepath string)(bool){
+func(m *Monster)Restore(filepath string)(bool){
 
 	file,error := os.OpenFile(filepath,os.O_RDWR | os.O_CREATE ,0777)
 	if error !=nil {

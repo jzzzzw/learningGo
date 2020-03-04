@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"math"
 	"strings"
-	"test/model"
+	"learningGo/model"
 	"time"
 	_"sort"
 	"os"
@@ -13,7 +13,8 @@ import (
 	_"io/ioutil"
 	_"os"
 	_"flag"
-	"encoding/json"
+	_"encoding/json"
+	_"runtime"
 )
 func main(){
 	// var str  string
@@ -624,48 +625,78 @@ func main(){
 	// flag.IntVar(&port,"P",3306,"port,default root")
 	// flag.Parse()
 	// fmt.Printf("%v %v %v %v\n",user,pwd,host,port)
-	monster := Monster{
-			Name : "Jack" ,
-			Age : 18,
-			Birth : "1993/11/27",
-			Salary : 300.01,
-			Skill : "kill",
+	// monster := Monster{
+	// 		Name : "Jack" ,
+	// 		Age : 18,
+	// 		Birth : "1993/11/27",
+	// 		Salary : 300.01,
+	// 		Skill : "kill",
+	// }
+	// a := make(map[string]interface{})
+	// a["name"]="tom"
+	// a["age"]=20
+	// a["gender"]="male"
+	// c := make(map[string]interface{})
+	// c["name"]="jack"
+	// c["age"]=30
+	// c["gender"]= []string{"female","male"}
+	// var b []map[string]interface{}
+	// b =append(b,a)
+	// b =append(b,c)
+	// d := float64(200.34)
+	// content,err :=json.Marshal(&monster)
+	// if err != nil{
+	// 	fmt.Printf("monster xuliehua error: %v\n",err)
+	// }
+	// fmt.Printf("monster xuliehua : %s \n%T\n",content,content)
+	// content,err =json.Marshal(a)
+	// if err != nil{
+	// 	fmt.Printf("monster xuliehua error: %v\n",err)
+	// }
+	// fmt.Printf("a map[string] xuliehua : %s \n%T\n",content,content)
+	// content,err =json.Marshal(b)
+	// if err != nil{
+	// 	fmt.Printf("monster xuliehua error: %v\n",err)
+	// }
+	// fmt.Printf("b slice of map[string] xuliehua : %s \n%T\n",content,content)
+	// content,err =json.Marshal(&d)
+	// if err != nil{
+	// 	fmt.Printf("monster xuliehua error: %v\n",err)
+	// }
+	// fmt.Printf("b slice of map[string] xuliehua : %s \n%T\n",content,content)
+	// go test()
+	// for i:=0;i<10;i++{
+	// 	fmt.Printf("hello golang! %v\n",i)
+	// 	time.Sleep(time.Second)
+	// }
+	// cpuNum :=runtime.NumCPU()
+	// fmt.Printf("%v\n",cpuNum)
+	// runtime.GOMAXPROCS(cpuNum -1)
+	for i:=1;i<=200;i++{
+		go fact(i)
 	}
-	a := make(map[string]interface{})
-	a["name"]="tom"
-	a["age"]=20
-	a["gender"]="male"
-	c := make(map[string]interface{})
-	c["name"]="jack"
-	c["age"]=30
-	c["gender"]= []string{"female","male"}
-	var b []map[string]interface{}
-	b =append(b,a)
-	b =append(b,c)
-	d := float64(200.34)
-	content,err :=json.Marshal(&monster)
-	if err != nil{
-		fmt.Printf("monster xuliehua error: %v\n",err)
+	for a,v := range myMap{
+		fmt.Printf("map[%v] is %v\n",a,v)
 	}
-	fmt.Printf("monster xuliehua : %s \n%T\n",content,content)
-	content,err =json.Marshal(a)
-	if err != nil{
-		fmt.Printf("monster xuliehua error: %v\n",err)
-	}
-	fmt.Printf("a map[string] xuliehua : %s \n%T\n",content,content)
-	content,err =json.Marshal(b)
-	if err != nil{
-		fmt.Printf("monster xuliehua error: %v\n",err)
-	}
-	fmt.Printf("b slice of map[string] xuliehua : %s \n%T\n",content,content)
-	content,err =json.Marshal(&d)
-	if err != nil{
-		fmt.Printf("monster xuliehua error: %v\n",err)
-	}
-	fmt.Printf("b slice of map[string] xuliehua : %s \n%T\n",content,content)
 
 } 
 
+var(
+	myMap = make(map[int]int,10)
+)
+func fact(n int){
+	res :=1
+	for i:=1;i<=n;i++{
+		res*=i
+	}
+	myMap[n]=res
+}
+func test(){
+	for i:=0;i<10;i++{
+		fmt.Printf("hello world! %v\n",i)
+		time.Sleep(time.Second)
+	}
+}
 type Monster struct{
 	Name string `json:"namefor"`
 	Age int
@@ -1039,13 +1070,7 @@ func sumargs(n1 int,args... int) int{
 	}
 	return sum 
 }
-func test(n int )(){
-	if (n>2){
-		n--
-		test(n)
-	}
-	fmt.Printf("%d\n",n)
-}
+
 func calucate(oper string,a int,b int)(res int){
 	switch oper{
 	case "+":
