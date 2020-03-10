@@ -15,6 +15,7 @@ import (
 	_"flag"
 	_"encoding/json"
 	_"runtime"
+	"sync"
 )
 func main(){
 	// var str  string
@@ -672,24 +673,120 @@ func main(){
 	// cpuNum :=runtime.NumCPU()
 	// fmt.Printf("%v\n",cpuNum)
 	// runtime.GOMAXPROCS(cpuNum -1)
-	for i:=1;i<=200;i++{
-		go fact(i)
+	// for i:=1;i<=20;i++{
+	// 	go fact(i)
+	// }
+	// time.Sleep(5 * time.Second)
+	// lock.Lock()
+	// for a,v := range myMap{
+	// 	fmt.Printf("map[%v] is %v\n",a,v)
+	// }
+	// lock.Unlock()
+	/* var intChan chan int
+	num :=20
+	intChan=make(chan int,3)
+	fmt.Printf("%v %p\n",intChan,&intChan)
+	intChan <- 10
+	intChan <- num
+	intChan <- 10
+	num =<-intChan
+	fmt.Printf("%v %v %v\n",len(intChan),cap(intChan),num) */
+	// var per  Person
+	// var perChan chan Person
+	// perChan =make(chan Person,10)
+	// for i:=1;i<=10;i++{
+	// 	per.Name = "tom"
+	// 	per.Age =rand.Intn(80)
+	// 	per.Address ="beijing"
+	// 	fmt.Printf("%v\n",per)
+	// 	perChan <- per
+	// }
+	// close(perChan)
+	// for v :=range perChan{
+	// 	fmt.Printf("%v\n",v)
+	// }
+	// initChan :=make(chan int,50)
+	// exitChan :=make(chan bool,1)
+	// go writeData(initChan)
+	// go readData(initChan,exitChan)
+	// _,ok := <-exitChan
+	// fmt.Printf("%v\n",ok)
+	numChan :=make(chan int,20)
+	resChan :=make(chan map[int]int,20)
+	exitChan :=make(chan bool,1)
+	flagChan :=make(chan string,8)
+	go writeData(numChan)
+	for i:=1;i<=8;i++{
+		go calcData(numChan,resChan,flagChan)
 	}
-	for a,v := range myMap{
-		fmt.Printf("map[%v] is %v\n",a,v)
+	go readData(resChan,exitChan)
+	for {
+		if len(flagChan)==8{
+			close (resChan)
+			break
+		}
 	}
+	
+	_,ok := <-exitChan
+	fmt.Printf("%v\n",ok)
 
 } 
 
+func writeData(initChan chan int){
+	for i:=1;i<=20;i++{
+		initChan <- i
+		fmt.Printf("write : %v\n",i)
+	}
+	close(initChan)
+}
+
+func calcData(initChan chan int,resChan chan map[int]int,flagChan chan string){
+	for{
+		num ,ok:= <- initChan
+	if !ok{
+		flagChan <- "finish"
+		break
+		}
+	a :=make(map[int]int,1)
+	res := 0
+	for i:=1;i<=num;i++{
+		res +=i
+	}
+	a[num]=res
+	fmt.Printf("calc : %v\n",num)
+	resChan <- a
+	}
+}
+func readData(resChan chan map[int]int,exitChan chan bool){
+	for{
+		 v ,ok:= <- resChan
+		if !ok{
+			break
+			}
+		for i,j :=range v{
+			fmt.Printf("res[%v]=%v\n",i,j)
+		}
+	}
+	exitChan <- true
+	close(exitChan)
+}
+type Person struct{
+	Name string
+	Age int
+	Address string
+}
 var(
 	myMap = make(map[int]int,10)
+	lock sync.Mutex
 )
 func fact(n int){
 	res :=1
 	for i:=1;i<=n;i++{
 		res*=i
 	}
+	lock.Lock()
 	myMap[n]=res
+	lock.Unlock()
 }
 func test(){
 	for i:=0;i<10;i++{
