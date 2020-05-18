@@ -7,9 +7,11 @@ import (
 	"learningGo/model"
 	"time"
 	_"sort"
+	"strconv"
+	"reflect"
 	"os"
-	_"bufio"
-	_"io"
+	"bufio"
+	"io"
 	_"io/ioutil"
 	_"os"
 	_"flag"
@@ -711,27 +713,258 @@ func main(){
 	// go readData(initChan,exitChan)
 	// _,ok := <-exitChan
 	// fmt.Printf("%v\n",ok)
-	numChan :=make(chan int,20)
-	resChan :=make(chan map[int]int,20)
-	exitChan :=make(chan bool,1)
-	flagChan :=make(chan string,8)
-	go writeData(numChan)
-	for i:=1;i<=8;i++{
-		go calcData(numChan,resChan,flagChan)
-	}
-	go readData(resChan,exitChan)
-	for {
-		if len(flagChan)==8{
-			close (resChan)
-			break
-		}
-	}
-	
-	_,ok := <-exitChan
-	fmt.Printf("%v\n",ok)
-
+	// numChan :=make(chan int,20)
+	// resChan :=make(chan map[int]int,20)
+	// exitChan :=make(chan bool,1)
+	// flagChan :=make(chan string,8)
+	// go writeData(numChan)
+	// for i:=1;i<=8;i++{
+	// 	go calcData(numChan,resChan,flagChan)
+	// }
+	// go readData(resChan,exitChan)
+	// for {
+	// 	if len(flagChan)==8{
+	// 		close (resChan)
+	// 		break
+	// 	}
+	// }
+	// _,ok := <-exitChan
+	// fmt.Printf("%v\n",ok)
+	// exitChan := make(chan bool,1)
+	// //exitChan1 := make(chan bool,1)
+	// filePath1 :="/Users/qiankun04/go/src/learningGo/main/random_write.txt"
+	// filePath2 :="/Users/qiankun04/go/src/learningGo/main/sorted_write.txt"
+	// //go writeDataToFile(filePath1,20,exitChan)
+	// _,ok:=<-exitChan
+	// _,ok1:=<-exitChan
+	// fmt.Printf("wtrie flag:%v\n",ok)
+	// go sortDataInFile(filePath1,filePath2,exitChan)
+	// //_,ok1:=<-exitChan
+	// fmt.Printf("sort flag:%v\n",ok1)
+	// intChan :=make(chan int,2000)
+	// primeChan :=make(chan int,3000)
+	// exitChan :=make(chan bool,4)
+	// filePath :="/Users/qiankun04/go/src/learningGo/main/prime_write.txt"
+	// go putNum(2000,intChan)
+	// for i:=0;i<4;i++{
+	// 	go checkPrime(intChan,primeChan,exitChan)
+	// }
+	// for{
+	// 	if len(exitChan)==4{
+	// 		close(primeChan)
+	// 		break
+	// 	}
+	// }
+	// file,err :=os.OpenFile(filePath,os.O_RDWR |os.O_CREATE |os.O_TRUNC,0777)
+	// if err !=nil {
+	// 	fmt.Printf("open file error : %v\n",err)
+	// }
+	// defer file.Close()
+	// writer :=bufio.NewWriter(file)
+	// len :=len(primeChan)
+	// for i:=0;i<len;i++{
+	// 	num := <-primeChan
+	// 	fmt.Printf("%v\n",num)
+	// 	writer.WriteString(strconv.Itoa(num))
+	// 	writer.WriteByte('\n')
+	// }
+	// writer.Flush()
+	// var num int =100
+	// reflectTest01(&num)	
+	// fmt.Printf("%v\n",num)
+	// var stu = Students{"tom",20}
+	// reflectTest02(stu)
+	// var f1 = 2.3
+	// reflectTest03(f1)
+	// var mon Monsters = Monsters{
+	// 	"cat",
+	// 	400,
+	// 	88.8,
+	// }
+	// testStruct(mon)
+	// fmt.Printf("%v\n",mon)
+   var a Cal = Cal{
+	   5,
+	   3,
+   }
+   testCal(a)
 } 
 
+type Cal struct{
+	Num1 int
+	Num2 int
+}
+
+func (c Cal)GetSub(name string){
+	fmt.Printf("%v has done the minus: %v - %v = %v\n",name,c.Num1,c.Num2,c.Num1-c.Num2)
+}
+
+func testCal(a interface{}){
+	rtype :=reflect.TypeOf(a)
+	rvalue :=reflect.ValueOf(a)
+	rnum :=rvalue.NumField()
+	for i:=0;i<rnum;i++{
+		fmt.Printf(" the Cal struct's %v is %v\n",i,rtype.Field(i).Name)
+	}
+	var param2 []reflect.Value
+	param2=append(param2,reflect.ValueOf("TOM"))
+	rvalue.Method(0).Call(param2)
+}
+type Students struct{
+	Name string
+	Age int
+}
+
+type Monsters struct{
+	Name string `json:"name"`
+	Age int `json:"age"`
+	Score float64
+}
+func (s Monsters) Print(){
+	fmt.Println("---start---")
+	fmt.Println(s)
+	fmt.Println("---end---")
+}
+func (s Monsters) Sum(n1,n2 int)(int){
+	return n1+n2
+}
+func (s Monsters) Set(name string,age int,score float64){
+	s.Name=name
+	s.Age=age
+	s.Score=score
+	fmt.Println(s)
+}
+
+func testStruct(a interface{}){
+	rtype :=reflect.TypeOf(a)
+	rval :=reflect.ValueOf(a)
+	//rkind :=rval.Kind()
+	rnum :=rval.NumField()
+	fmt.Println("the struct's field count is",rnum)
+	for i:=0 ;i<rnum;i++{
+		fmt.Printf("field %v 's value is %v,tag is %v\n",i,rval.Field(i),rtype.Field(i).Tag.Get("json"))
+	}
+	rmethodnum := rval.NumMethod()
+	fmt.Println("the struct's method count is",rmethodnum)
+	rval.Method(0).Call(nil)
+	var param  []reflect.Value
+	var param1  []reflect.Value
+	param =append(param,reflect.ValueOf(10))
+	param =append(param,reflect.ValueOf(40))
+	res :=rval.Method(2).Call(param)
+	fmt.Printf("res = %v\n",res[0].Int())
+	param1=append(param1,reflect.ValueOf("robot"))
+	param1=append(param1,reflect.ValueOf(500))
+	param1=append(param1,reflect.ValueOf(10.2))
+	rval.Method(1).Call(param1)
+}
+func reflectTest03(b interface{}){
+	rtype := reflect.TypeOf(b)
+	rvalue := reflect.ValueOf(b)
+	rkind := rvalue.Kind()
+	iv := rvalue.Interface()
+	fv :=iv.(float64)
+	fmt.Printf("%v %v %v %v %v\n",rtype,rvalue,rkind,iv,fv)
+}
+func reflectTest02 (b interface{}){
+	rtype :=reflect.TypeOf(b)
+	rvalue :=reflect.ValueOf(b)
+	rkind :=reflect.ValueOf(b).Kind()
+	iv :=rvalue.Interface()
+	stu := iv.(Students)
+	
+	fmt.Printf("%v %v %T %v %T  %v  %v\n",rtype,rvalue,rvalue,iv,iv,stu.Name,rkind)
+}
+func reflectTest01 (b interface{}){
+	rtype :=reflect.TypeOf(b)
+	rvalue :=reflect.ValueOf(b)
+	iv :=rvalue.Interface()
+	rvalue.Elem().SetInt(20)
+	fmt.Printf("%v %v %T %v\n",rtype,rvalue,rvalue,iv)
+}
+func putNum (n int ,intChan chan int){
+	for  i:=1;i<=n;i++{
+		intChan <- i
+	}
+	close (intChan)
+}
+func checkPrime (intChan chan int,primeChan chan int,exitChan chan bool){
+	for{
+		num,ok:=<-intChan
+		//fmt.Printf("%v %v\n",num,ok)
+		if !ok{
+			exitChan <-true
+			break
+		}
+		flag := true
+	for i:=2;i<num;i++{
+		if num%i==0{
+			flag =false
+			break
+		}
+		}
+		if flag==true{
+			primeChan <- num
+		}
+	}	
+}
+func writeDataToFile(filePath string,n int,exitChan chan bool){
+	file,err :=os.OpenFile(filePath,os.O_RDWR |os.O_CREATE |os.O_TRUNC,0777)
+	if err !=nil {
+		fmt.Printf("open file error : %v\n",err)
+	}
+	defer file.Close()
+	writer :=bufio.NewWriter(file)
+	for i:=0;i<n;i++{
+		writer.WriteString(strconv.Itoa(rand.Intn(10000)))
+		writer.WriteByte('\n')
+	}
+	writer.Flush()	
+	exitChan <- true
+	close (exitChan)
+}
+
+func sortDataInFile(filePath1 string,filePath2 string,exitChan chan bool){
+	file,err :=os.Open(filePath1)
+	if err !=nil {
+		fmt.Printf("open file error :%v",err)
+	}
+	defer file.Close()
+	reader :=bufio.NewReader(file)
+	var slice []int
+	for{
+		str,err :=reader.ReadString('\n')
+		//fmt.Printf("%v ",str)
+		if err ==io.EOF{
+			break
+		}
+		num,_:=strconv.Atoi(str[0:len(str)-1])
+		slice = append(slice,num)
+		
+	}
+	//fmt.Printf("slice is here\n")
+	for i:=1;i<len(slice);i++{
+		for j:=0;j<len(slice)-i;j++{
+			if slice[j]<slice[j+1]{
+				slice[j],slice[j+1]=slice[j+1],slice[j]
+			}
+		}
+	}
+	//fmt.Printf("%v\n",slice)
+	wirtefile,err1 :=os.OpenFile(filePath2,os.O_RDWR |os.O_CREATE|os.O_TRUNC,0777)
+	if err1!=nil {
+		fmt.Printf("open file error : %v\n",err)
+	}
+	defer wirtefile.Close()	
+	writer :=bufio.NewWriter(wirtefile)
+	for a:=0;a<=len(slice)-1;a++{
+		writer.WriteString(strconv.Itoa(slice[a]))
+		writer.WriteByte('\n')
+	}
+	writer.Flush()	
+	exitChan <- true
+	close (exitChan)
+}
 func writeData(initChan chan int){
 	for i:=1;i<=20;i++{
 		initChan <- i
@@ -1085,14 +1318,14 @@ func testArray(arr *[3]int) {
 	(*arr)[0] = 0
 }
 
-func checkPrime(a int) bool{
-	for j:=2;j<=a/2;j++{
-		if (a%j ==0){
-			return false
-		}
-	}
-	return true
-}
+// func checkPrime(a int) bool{
+// 	for j:=2;j<=a/2;j++{
+// 		if (a%j ==0){
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
 func checkDay( year,month,day int)bool{
 	if(day>=1&&day<=31){
 		switch month{
